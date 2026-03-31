@@ -1,6 +1,7 @@
 package com.teamwork.teamwork.service.impl;
 
 import com.teamwork.teamwork.entity.User;
+import com.teamwork.teamwork.exception.EmailAlreadyExistsException;
 import com.teamwork.teamwork.repository.UserRepository;
 import com.teamwork.teamwork.service.UserService;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -16,7 +17,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(User user) {
-        userRepository.save(user); // built-in JPA method
+        // Check if email already exists
+        if (userRepository.existsByEmail(user.getEmail())) {
+            // Throw custom exception instead of letting the database crash
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        // Save user if email is unique
+        userRepository.save(user);
     }
 
     @Override
