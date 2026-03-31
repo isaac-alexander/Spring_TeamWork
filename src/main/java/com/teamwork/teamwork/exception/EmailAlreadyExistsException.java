@@ -1,4 +1,8 @@
-package com.teamwork.teamwork.exception;
+package com.teamwork.teamwork.exception; // create this package if not exists
 
-public class EmailAlreadyExistsException {
+// Custom exception for duplicate email
+public class EmailAlreadyExistsException extends RuntimeException {
+    public EmailAlreadyExistsException(String message) {
+        super(message);
+    }
 }
