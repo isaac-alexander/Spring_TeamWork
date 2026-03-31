@@ -20,12 +20,10 @@ public class TeamworkApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        User existingUser = userRepository.findByEmail("alex@gmail.com");
+        User user = userRepository.findByEmail("alex@gmail.com");
 
-        if (existingUser == null) {
-            User user1 = new User("Alex Isaac", "alex@gmail.com", "alex123", "admin");
-            userRepository.save(user1);
-        }
+        User user1 = new User("Alex Isaac", "alex@gmail.com", "alex123", "admin");
+        userRepository.save(user1);
 
     }
 }
