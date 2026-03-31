@@ -3,21 +3,30 @@ package com.teamwork.teamwork.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Article {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
 
-    @Column(columnDefinition = "TEXT") // allows long text
-    private String content; // article body
+    @Column(columnDefinition = "TEXT") // allows long content
+    private String content;
 
-    private String author; // who created it
+    private String author;
 
-    private LocalDateTime createdAt; // time created
+    private LocalDateTime createdAt;
+
+
+//      Stores comments as a collection of strings.
+//      Uses @ElementCollection so JPA stores it in a separate table automatically.
+    @ElementCollection
+    private List<String> comments = new ArrayList<>();
 
     public Article() {}
 
@@ -26,45 +35,29 @@ public class Article {
         this.content = content;
         this.author = author;
         this.createdAt = createdAt;
+        this.comments = new ArrayList<>();
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
 
-    public String getContent() {
-        return content;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public List<String> getComments() { return comments; }
+    public void setComments(List<String> comments) { this.comments = comments; }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    // Adds a single comment to the article
+    public void addComment(String comment) {
+        this.comments.add(comment);
     }
 }
