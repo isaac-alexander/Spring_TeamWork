@@ -3,94 +3,83 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet">
 </head>
 <body>
+
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
+    <div class="container-fluid ms-auto justify-content-center">
         <a class="navbar-brand"
            th:href="@{/}">TEAMWORK</a>
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse"
-             id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active"
-                       aria-current="page"
-                       th:href="@{/register}">Register</a>
-                </li>
-            </ul>
-        </div>
     </div>
 </nav>
-<br/><br/>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
+
+<!-- BODY -->
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-5">
 
             <div th:if="${error}">
-                <div class="alert alert-danger" th:text="${error}"></div>
-            </div>
-            <div th:if="${param.logout}">
-                <div class="alert alert-success"> You have been logged out.</div>
+                <div class="alert alert-danger text-center"
+                     th:text="${error}"></div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="text-center">Login Form</h2>
+            <div th:if="${param.logout}">
+                <div class="alert alert-success text-center">
+                    You have been logged out.
                 </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-white">
+                    <h4 class="mb-0">Login</h4>
+                </div>
+
                 <div class="card-body">
+
                     <form
                             method="post"
                             role="form"
                             th:action="@{/do-login}"
                             th:object="${user}"
-                            class="form-horizontal"
                     >
-                        <div class="form-group mb-3">
-                            <label class="control-label"> Email</label>
-                            <input
-                                    type="text"
-                                    id="email"
-                                    name="email"
-                                    class="form-control"
-                                    placeholder="Enter email address"
-                            />
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="text"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="Enter email">
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label class="control-label"> Password</label>
-                            <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    class="form-control"
-                                    placeholder="Enter password"
-                            />
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Enter password">
                         </div>
-                        <div class="form-group mb-3">
+
+                        <div class="d-grid">
                             <button type="submit"
-                                    class="btn btn-primary">Submit
+                                    class="btn btn-outline-dark">
+                                Login
                             </button>
-                            <span> Not registered ?
-                                <a th:href="@{/register}">Register/Signup here</a>
-                            </span>
                         </div>
+
                     </form>
+
                 </div>
             </div>
+
         </div>
     </div>
+
 </div>
+
 </body>
 </html>
