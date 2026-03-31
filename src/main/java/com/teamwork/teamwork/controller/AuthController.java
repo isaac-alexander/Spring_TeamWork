@@ -1,50 +1,74 @@
 package com.teamwork.teamwork.controller;
 
 import com.teamwork.teamwork.entity.User;
+import com.teamwork.teamwork.exception.EmailAlreadyExistsException;
 import com.teamwork.teamwork.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AuthController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public AuthController(UserService userService) {
         this.userService = userService;
     }
 
-
-    // show login page
+    // default route
     @GetMapping("/")
-    public String defaultRoute() {
+    public String defaultRoute(Model model) {
+        model.addAttribute("user", new User());
         return "login";
     }
 
     // show login page
     @GetMapping("/login")
-    public String loginPage() {
-        return "redirect:/login";
+    public String loginPage(Model model) {
+        model.addAttribute("user", new User());
+        return "login";
     }
 
-    // show register page
-    @GetMapping("/register") // handles GET request to /register
-    public String registerPage(Model model) {
+    // show register page (only admin)
+    @GetMapping("/register")
+    public String registerPage(HttpSession session, Model model) {
 
-        model.addAttribute("user", new User()); // sends empty object to HTML
+        User user = (User) session.getAttribute("loggedInUser");
 
-        return "register"; // must match register.html file name
+        if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", new User());
+        return "register";
     }
 
-    // handle registration
+    // handle registration with duplicate email check
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user) {
+    public String registerUser(@ModelAttribute("user") User user,
+                               Model model,
+                               HttpSession session) {
 
-        userService.saveUser(user); // save to DB
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
 
-        return "redirect:/login";
+        if (loggedInUser == null || !"admin".equalsIgnoreCase(loggedInUser.getRole())) {
+            return "redirect:/login";
+        }
+
+        user.setRole("user"); // default role for employees
+
+        try {
+            userService.saveUser(user); // may throw EmailAlreadyExistsException
+            return "redirect:/feed?success";
+
+        } catch (EmailAlreadyExistsException ex) {
+            // Catch duplicate email and display error in form
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("user", user);
+            return "register";
+        }
     }
 
     // handle login
@@ -57,14 +81,18 @@ public class AuthController {
         User user = userService.findByEmail(email);
 
         if (user != null && user.getPassword().equals(password)) {
-
-            // store logged-in user in session
             session.setAttribute("loggedInUser", user);
-
             return "redirect:/feed";
         }
 
         model.addAttribute("error", "Invalid credentials");
         return "login";
+    }
+
+    // handle logout
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // clear session
+        return "redirect:/login?logout";
     }
 }
