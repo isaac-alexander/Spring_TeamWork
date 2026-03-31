@@ -1,13 +1,15 @@
-1. Admin can create an employee user account. (Done)
-2. Admin/Employees can sign in. (Done)
-3. Employees can post gifs. (Not completed)
-4. Employees can write and post articles. (done)
-5. Employees can edit their articles.
-6. Employees can delete their articles.
-7. Employees can delete their gifs post.
-8. Employees can comment on other colleagues' article post.
-9. Employees can comment on other colleagues' gif post.
-10. Employees can view all articles and gifs, showing the most recently posted articles or gifs
-first.
-11. Employees can view a specific article.
-12. Employees can view a specific gif post.
+1. Admin can create an employee user account. admin only should have a button to create employee then go a form to create employees. Remove sign up option from Login page (done)
+
+2. Admin/Employees can sign in. (done)
+3. Employees can post gifs. (Not  completed)
+4. Employees can write and post articles.(done)
+5. Employees can edit their articles. (done)
+6. Employees can delete their articles. (done)
+7. Employees can delete their gifs post. (Not checked)
+8. Employees can comment on other colleagues' article post. (done)
+9. Employees can comment on other colleagues' gif post.(not done)
+10. Employees can view all articles and gifs, showing the most recently posted articles or gifs first. (done)
+11. Employees can view a specific article. (done)
+12. Employees can view a specific gif post. (not done)
+13. Have a logout button in all routes except login route(Not working well)
+14. Catch error for duplicate email instead of displaying white error page (done)
