@@ -9,12 +9,16 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand" th:href="@{/feed}">TEAMWORK</a>
+        <a class="navbar-brand"
+           th:href="@{/feed}">TEAMWORK</a>
 
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-light" th:href="@{/feed}">Feed</a>
-            <a class="btn btn-outline-light" th:href="@{/articles}">Articles</a>
-            <a class="btn btn-outline-light" th:href="@{/gifs}">GIFs</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/feed}">Feed</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/articles}">Articles</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/gifs}">GIFs</a>
         </div>
 
         <div class="ms-auto d-flex gap-2">
@@ -23,7 +27,8 @@
                th:href="@{/register}">
                 Create Employee
             </a>
-            <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
+            <a class="btn btn-outline-danger"
+               th:href="@{/logout}">Logout</a>
         </div>
 
     </div>
@@ -35,11 +40,15 @@
 
             <h3 class="mb-4">Edit Article</h3>
 
-            <form th:action="@{/articles/update}" method="post">
+            <form th:action="@{/articles/update}"
+                  method="post">
 
-                <input type="hidden" th:value="${article.id}" name="id"/>
+                <input type="hidden"
+                       th:value="${article.id}"
+                       name="id"/>
 
-                <input type="text" name="title"
+                <input type="text"
+                       name="title"
                        th:value="${article.title}"
                        class="form-control mb-3"/>
 

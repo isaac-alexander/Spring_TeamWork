@@ -54,7 +54,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         if (article != null) {
 
-            // Initialize comments list if null
+            // If comments list is null - create new list
             if (article.getComments() == null) {
                 article.setComments(new ArrayList<>());
             }

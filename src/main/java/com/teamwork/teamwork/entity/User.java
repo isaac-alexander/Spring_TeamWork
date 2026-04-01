@@ -3,7 +3,7 @@ package com.teamwork.teamwork.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -24,7 +24,7 @@ public class User {
     public User() {
     }
 
-    public User( String name, String email, String password, String role) {
+    public User(String name, String email, String password, String role) {
         this.name = name;
         this.email = email;
         this.password = password;

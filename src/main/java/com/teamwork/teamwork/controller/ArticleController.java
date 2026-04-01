@@ -43,8 +43,6 @@ public class ArticleController {
 
         User user = (User) session.getAttribute("loggedInUser");
 
-        if (user == null) return "redirect:/login";
-
         article.setAuthor(user.getName()); // sets logged-in user as author.
         articleService.saveArticle(article); // save new article.
 
@@ -64,12 +62,18 @@ public class ArticleController {
         if (article == null) return "redirect:/articles";
 
         // Only author or admin
+        // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
+        // !"admin".equalsIgnoreCase(user.getRole())
+        // checks if the current user’s role is not "admin".
         if (!article.getAuthor().equals(user.getName())
                 && !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/articles";
         }
 
+        // calls service to get all articles and send to html
         model.addAttribute("article", article);
+
+        // Send logged-in user to html.
         model.addAttribute("user", user);
 
         return "edit-article";
@@ -81,19 +85,22 @@ public class ArticleController {
                                 HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) return "redirect:/login";
 
-        Article existing = articleService.getArticleById(article.getId());
-        if (existing == null) return "redirect:/articles";
+        Article existingUser = articleService.getArticleById(article.getId());
+        if (existingUser == null) return "redirect:/articles";
 
         // Only author or admin
-        if (!existing.getAuthor().equals(user.getName())
+        // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
+        // !"admin".equalsIgnoreCase(user.getRole())
+        // checks if the current user’s role is not "admin".
+        if (!existingUser.getAuthor().equals(user.getName())
                 && !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/articles";
         }
 
         // Keep original author
-        article.setAuthor(existing.getAuthor());
+        article.setAuthor(existingUser.getAuthor());
+        article.setCreatedAt(existingUser.getCreatedAt());
 
         articleService.saveArticle(article);
 
@@ -112,6 +119,9 @@ public class ArticleController {
         if (article == null) return "redirect:/articles";
 
         // Only author or admin
+        // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
+        // !"admin".equalsIgnoreCase(user.getRole())
+        // checks if the current user’s role is not "admin".
         if (!article.getAuthor().equals(user.getName())
                 && !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/articles";
@@ -141,7 +151,7 @@ public class ArticleController {
         return "redirect:/articles"; // Refresh page
     }
 
-    // view single aarticle
+    // view single article
     @GetMapping("/articles/{id}") // View single article
     public String viewArticle(@PathVariable Long id,
                               Model model,

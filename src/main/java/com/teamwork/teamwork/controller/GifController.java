@@ -43,10 +43,6 @@ public class GifController {
         // get logged-in user
         User user = (User) session.getAttribute("loggedInUser");
 
-        // if not logged in - go to login
-        if (user == null)
-            return "redirect:/login";
-
         if (title == null || title.trim().isEmpty()) {
             return "redirect:/gifs";
         }
@@ -78,15 +74,15 @@ public class GifController {
         // get user from session
         User user = (User) session.getAttribute("loggedInUser");
 
-        // if not logged in - login
-        if (user == null) return "redirect:/login";
-
         // get GIF from database
         Gif gif = gifService.getGifById(id);
 
         // if not found - go back
         if (gif == null) return "redirect:/gifs";
 
+        // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
+        // !"admin".equalsIgnoreCase(user.getRole())
+        // checks if the current user’s role is not "admin".
         // check permission: only author or admin can delete
         if (!gif.getAuthor().equals(user.getName()) &&
                 !"admin".equalsIgnoreCase(user.getRole())) {
@@ -108,9 +104,6 @@ public class GifController {
 
         // get logged-in user
         User user = (User) session.getAttribute("loggedInUser");
-
-        // if not logged in → login
-        if (user == null) return "redirect:/login";
 
         // attach username to comment
         comment = user.getName() + ": " + comment;

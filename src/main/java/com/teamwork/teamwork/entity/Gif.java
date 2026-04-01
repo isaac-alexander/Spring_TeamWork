@@ -25,11 +25,12 @@ public class Gif {
 
     private LocalDateTime createdAt;
 
-//    Stores comments on the GIF as list of string
+    //    Stores comments on the GIF as list of string
     @ElementCollection
     private List<String> comments = new ArrayList<>();
 
-    public Gif() {}
+    public Gif() {
+    }
 
     public Gif(String title, String imageUrl, String author, LocalDateTime createdAt) {
         this.title = title;
@@ -39,23 +40,53 @@ public class Gif {
         this.comments = new ArrayList<>();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-    public List<String> getComments() { return comments; }
-    public void setComments(List<String> comments) { this.comments = comments; }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
 
     public void addComment(String comment) {
         this.comments.add(comment);

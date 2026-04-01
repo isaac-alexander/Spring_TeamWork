@@ -10,11 +10,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand" th:href="@{/feed}">TEAMWORK</a>
+        <a class="navbar-brand"
+           th:href="@{/feed}">TEAMWORK</a>
 
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-light" th:href="@{/articles}">Articles</a>
-            <a class="btn btn-outline-light" th:href="@{/gifs}">GIFs</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/articles}">Articles</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/gifs}">GIFs</a>
         </div>
 
         <div class="ms-auto d-flex gap-2">
@@ -23,7 +26,8 @@
                th:href="@{/register}">
                 Create Employee
             </a>
-            <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
+            <a class="btn btn-outline-danger"
+               th:href="@{/logout}">Logout</a>
         </div>
 
     </div>
@@ -31,41 +35,60 @@
 
 <div class="container py-4">
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
 
-            <h3 class="fw-bold" th:text="${gif.title}"></h3>
+            <!-- gif card -->
+            <div class="card shadow-sm mb-4">
 
-            <img th:src="${gif.imageUrl}"
-                 class="img-fluid rounded mb-3"/>
+                <img th:src="${gif.imageUrl}"
+                     class="card-img-top"
+                     style="max-height: 350px; object-fit: cover;">
 
-            <small class="text-secondary">
-                By <span th:text="${gif.author}"></span> |
-                <span th:text="${gif.createdAt}"></span>
-            </small>
+                <div class="card-body">
 
-        </div>
-    </div>
+                    <h5 class="fw-bold"
+                        th:text="${gif.title}"></h5>
 
-    <!-- COMMENTS -->
-    <div class="card shadow-sm">
-        <div class="card-body">
+                    <small class="text-secondary">
+                        By <span th:text="${gif.author}"></span> |
+                        <span th:text="${#temporals.format(gif.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+                    </small>
 
-            <h5>Comments</h5>
-
-            <div th:if="${gif.comments != null}">
-                <div th:each="c : ${gif.comments}" class="border-bottom mb-2 pb-2">
-                    <span th:text="${c}"></span>
                 </div>
             </div>
 
-            <form th:action="@{'/gifs/comment/' + ${gif.id}}" method="post">
-                <input type="text" name="comment"
-                       class="form-control mb-2"
-                       placeholder="Write a comment">
+            <!-- comments -->
+            <div class="card shadow-sm">
+                <div class="card-body">
 
-                <button class="btn btn-outline-dark btn-sm">Comment</button>
-            </form>
+                    <h6 class="mb-3">Comments</h6>
+
+                    <div th:if="${gif.comments != null}">
+                        <div th:each="c : ${gif.comments}"
+                             class="border-bottom mb-2 pb-2 small">
+                            <span th:text="${c}"></span>
+                        </div>
+                    </div>
+
+                    <form th:action="@{'/gifs/comment/' + ${gif.id}}"
+                          method="post">
+                        <div class="input-group input-group-sm">
+
+                            <input type="text"
+                                   name="comment"
+                                   class="form-control"
+                                   placeholder="Write a comment">
+
+                            <button class="btn btn-outline-dark">
+                                Post
+                            </button>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
 
         </div>
     </div>

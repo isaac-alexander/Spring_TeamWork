@@ -10,11 +10,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand" th:href="@{/feed}">TEAMWORK</a>
+        <a class="navbar-brand"
+           th:href="@{/feed}">TEAMWORK</a>
 
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-light" th:href="@{/articles}">Articles</a>
-            <a class="btn btn-outline-light" th:href="@{/gifs}">GIFs</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/articles}">Articles</a>
+            <a class="btn btn-outline-light"
+               th:href="@{/gifs}">GIFs</a>
         </div>
 
         <div class="ms-auto d-flex gap-2">
@@ -23,56 +26,95 @@
                th:href="@{/register}">
                 Create Employee
             </a>
-            <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
+            <a class="btn btn-outline-danger"
+               th:href="@{/logout}">Logout</a>
         </div>
 
     </div>
 </nav>
+
 <div class="container py-4">
 
+    <!-- Welcome -->
     <div class="mb-4">
         <h4>Welcome, <span th:text="${user.name}"></span></h4>
 
         <div class="d-flex gap-2 mt-3">
-            <a class="btn btn-outline-dark" th:href="@{/articles}">View Articles</a>
-            <a class="btn btn-outline-dark" th:href="@{/gifs}">View GIFs</a>
+            <a class="btn btn-outline-dark"
+               th:href="@{/articles}">View Articles</a>
+            <a class="btn btn-outline-dark"
+               th:href="@{/gifs}">View GIFs</a>
         </div>
     </div>
 
     <hr class="mb-4">
 
+    <!-- articles -->
     <h4 class="mb-3">Articles</h4>
 
-    <div th:each="article : ${articles}" class="card shadow-sm mb-3">
-        <div class="card-body">
-            <h5 class="fw-bold" th:text="${article.title}"></h5>
-            <p class="text-muted" th:text="${article.content}"></p>
-            <small class="text-secondary">
-                By <span th:text="${article.author}"></span>
-            </small>
-            <a th:href="@{'/articles/' + ${article.id}}"
-               class="btn btn-outline-secondary btn-sm">
-                View
-            </a>
+    <div class="row">
+        <div class="col-md-4 mb-4"
+             th:each="article : ${articles}">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h6 class="fw-bold"
+                        th:text="${article.title}"></h6>
+
+                    <p class="text-muted small"
+                       th:text="${article.content.length() > 120 ? article.content.substring(0,120) + '...' : article.content}">
+                    </p>
+
+                    <small class="text-secondary d-block mb-2">
+                        By <span th:text="${article.author}"></span>
+                    </small>
+
+                    <a th:href="@{'/articles/' + ${article.id}}"
+                       class="btn btn-outline-secondary btn-sm">
+                        View
+                    </a>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
     <hr class="my-4">
 
+    <!-- gif -->
     <h4 class="mb-3">GIFs</h4>
 
-    <div th:each="gif : ${gifs}" class="card shadow-sm mb-3">
-        <div class="card-body">
-            <h5 class="fw-bold" th:text="${gif.title}"></h5>
-            <img th:src="${gif.imageUrl}" class="img-fluid rounded mb-2"/>
-            <small class="text-secondary">
-                By <span th:text="${gif.author}"></span>
-            </small>
+    <div class="row">
+        <div class="col-md-4 col-sm-6 mb-4"
+             th:each="gif : ${gifs}">
 
-            <a th:href="@{'/gifs/' + ${gif.id}}"
-               class="btn btn-outline-secondary btn-sm">
-                View
-            </a>
+            <div class="card shadow-sm h-100">
+
+                <a th:href="@{'/gifs/' + ${gif.id}}">
+                    <img th:src="${gif.imageUrl}"
+                         class="card-img-top"
+                         style="height: 200px; object-fit: cover;">
+                </a>
+
+                <div class="card-body">
+
+                    <h6 class="fw-bold"
+                        th:text="${gif.title}"></h6>
+
+                    <small class="text-secondary d-block mb-2">
+                        By <span th:text="${gif.author}"></span>
+                    </small>
+
+                    <a th:href="@{'/gifs/' + ${gif.id}}"
+                       class="btn btn-outline-secondary btn-sm">
+                        View
+                    </a>
+
+                </div>
+            </div>
+
         </div>
     </div>
 

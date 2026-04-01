@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AuthController {
 
-    private  UserService userService;
+    private UserService userService;
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -29,12 +29,33 @@ public class AuthController {
         return "login";
     }
 
+    // handle login
+    @PostMapping("/login-user")
+    public String loginUser(@RequestParam String email,
+                            @RequestParam String password,
+                            Model model,
+                            HttpSession session) {
+
+        User user = userService.findByEmail(email);
+
+        // if user is not null and user password = password
+        if (user != null && user.getPassword().equals(password)) {
+            session.setAttribute("loggedInUser", user);
+            return "redirect:/feed";
+        }
+
+        model.addAttribute("error", "Invalid credentials");
+        return "login";
+    }
+
     // show register page (only admin)
     @GetMapping("/register")
     public String registerPage(HttpSession session, Model model) {
 
         User user = (User) session.getAttribute("loggedInUser");
 
+        // if user is null and not an admin redirect to login page
+        // checks if the current user’s role is not "admin".
         if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/login";
         }
@@ -50,10 +71,6 @@ public class AuthController {
 
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
-        if (loggedInUser == null || !"admin".equalsIgnoreCase(loggedInUser.getRole())) {
-            return "redirect:/login";
-        }
-
         user.setRole("user"); // default role for employees
 
         try {
@@ -62,28 +79,10 @@ public class AuthController {
 
         } catch (EmailAlreadyExistsException ex) {
             // Catch duplicate email and display error in form
-            model.addAttribute("error", ex.getMessage());
-            model.addAttribute("user", user);
+            model.addAttribute("error", ex.getMessage()); // send error message to html
+            model.addAttribute("user", user); // Pass user to html
             return "register";
         }
-    }
-
-    // handle login
-    @PostMapping("/login-user")
-    public String loginUser(@RequestParam String email,
-                            @RequestParam String password,
-                            Model model,
-                            HttpSession session) {
-
-        User user = userService.findByEmail(email);
-
-        if (user != null && user.getPassword().equals(password)) {
-            session.setAttribute("loggedInUser", user);
-            return "redirect:/feed";
-        }
-
-        model.addAttribute("error", "Invalid credentials");
-        return "login";
     }
 
     // handle logout
