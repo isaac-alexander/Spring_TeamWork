@@ -1,7 +1,7 @@
 1. Admin can create an employee user account. admin only should have a button to create employee then go a form to create employees. Remove sign up option from Login page (done)
 
 2. Admin/Employees can sign in. (done)
-3. Employees can post gifs. (Not  completed)
+3. Employees can post gifs. (Done)
 4. Employees can write and post articles.(done)
 5. Employees can edit their articles. (done)
 6. Employees can delete their articles. (done)

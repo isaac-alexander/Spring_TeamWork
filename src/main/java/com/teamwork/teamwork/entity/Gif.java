@@ -16,13 +16,16 @@ public class Gif {
 
     private String title;
 
-    private String imageUrl; // URL or path to the uploaded GIF
+    // URL or path to the uploaded GIF from cloudinary
+    private String imageUrl;
+
+    private String publicId;
 
     private String author;
 
     private LocalDateTime createdAt;
 
-//    Stores comments on the GIF as strings
+//    Stores comments on the GIF as list of string
     @ElementCollection
     private List<String> comments = new ArrayList<>();
 
@@ -57,4 +60,13 @@ public class Gif {
     public void addComment(String comment) {
         this.comments.add(comment);
     }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
 }

@@ -1,0 +1,88 @@
+How to set up Cloudinary
+
+1. Start by adding the Cloudinary dependency in pom.xml
+    <dependency>
+        <groupId>io.github.cdimascio</groupId>
+        <artifactId>dotenv-java</artifactId>
+        <version>3.0.0</version>
+    </dependency>
+
+2. Create .env file in the root of your application
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+3. Add .env to .gitignore
+
+4. Configure Cloudinary credentials in your application properties:
+##cloudinary configuration
+cloudinary.cloud-name=${CLOUDINARY_CLOUD_NAME}
+cloudinary.api-key=${CLOUDINARY_API_KEY}
+cloudinary.api-secret=${CLOUDINARY_API_SECRET}
+
+5. Create a Cloudinary configuration class and import necessary files: CloudinaryConfig.java
+
+package com.teamwork.teamwork.config;
+
+import com.cloudinary.Cloudinary;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration // Tells Spring this is a configuration class
+public class CloudinaryConfig {
+
+    @Bean // Creates a Cloudinary object that can be injected anywhere
+    public Cloudinary cloudinary() {
+
+        // Load variables from .env file
+        Dotenv dotenv = Dotenv.load();
+
+        // Create config map for Cloudinary
+        Map<String, String> config = new HashMap<>();
+
+        // Get values from .env and store in a variable
+        String cloudName = dotenv.get("CLOUDINARY_CLOUD_NAME");
+        String apiKey = dotenv.get("CLOUDINARY_API_KEY");
+        String apiSecret = dotenv.get("CLOUDINARY_API_SECRET");
+
+        // put/add in new map config... Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", cloudName);
+        config.put("api_key", apiKey);
+        config.put("api_secret", apiSecret);
+
+        // Return Cloudinary instance
+        return new Cloudinary(config);
+    }
+}
+
+6. Using Cloudinary in gif service
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+@Service
+public class GifServiceImpl {
+
+    private final Cloudinary cloudinary;
+
+    public GifServiceImpl(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
+
+    public String saveGif(MultipartFile file) {
+        try {
+            // Upload file to Cloudinary
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("url").toString(); // Get GIF URL
+        } catch (Exception e) {
+            throw new RuntimeException("Upload failed: " + e.getMessage());
+        }
+    }
+}
+
+

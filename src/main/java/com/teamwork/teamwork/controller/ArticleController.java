@@ -19,12 +19,18 @@ public class ArticleController {
 
     // view article
     @GetMapping("/articles")
-    public String allArticles(Model model, HttpSession session) {
+    public String articlePage(HttpSession session, Model model) {
 
+        // Get currently logged-in user from session.
         User user = (User) session.getAttribute("loggedInUser");
+
+        // If no user logged in, redirect to login page.
         if (user == null) return "redirect:/login";
 
+        // Send logged-in user to html.
         model.addAttribute("user", user);
+
+        // calls service to get all articles and send to html
         model.addAttribute("articles", articleService.getAllArticles());
 
         return "articles";
@@ -36,13 +42,13 @@ public class ArticleController {
                                 HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
+
         if (user == null) return "redirect:/login";
 
-        article.setAuthor(user.getName());
+        article.setAuthor(user.getName()); // sets logged-in user as author.
+        articleService.saveArticle(article); // save new article.
 
-        articleService.saveArticle(article);
-
-        return "redirect:/articles";
+        return "redirect:/articles"; // refresh page to show new article.
     }
 
     // edit page
@@ -94,7 +100,7 @@ public class ArticleController {
         return "redirect:/articles";
     }
 
-//    delete article
+    //    delete article
     @PostMapping("/articles/delete/{id}")
     public String deleteArticle(@PathVariable Long id,
                                 HttpSession session) {
@@ -118,33 +124,39 @@ public class ArticleController {
 
     // add comment
     @PostMapping("/articles/comment/{id}")
-    public String commentArticle(@PathVariable Long id,
-                                 @RequestParam("comment") String comment,
-                                 HttpSession session) {
+    public String addComment(@PathVariable Long id,
+                             @RequestParam String comment,
+                             HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
+
         if (user == null) return "redirect:/login";
 
-        // Save comment with username
-        articleService.addComment(id, user.getName() + ": " + comment);
+        comment = user.getName() + ": " + comment;
+        // adds username to comment.
 
-        return "redirect:/articles";
+        articleService.addComment(id, comment);
+        // calls service to save comment.
+
+        return "redirect:/articles"; // Refresh page
     }
 
-   // view single aarticle
-    @GetMapping("/articles/{id}")
+    // view single aarticle
+    @GetMapping("/articles/{id}") // View single article
     public String viewArticle(@PathVariable Long id,
                               Model model,
                               HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
+
         if (user == null) return "redirect:/login";
 
         Article article = articleService.getArticleById(id);
+
         if (article == null) return "redirect:/articles";
 
-        model.addAttribute("article", article);
-        model.addAttribute("user", user);
+        model.addAttribute("article", article); // Pass article to html
+        model.addAttribute("user", user); // Pass user to html
 
         return "view-article";
     }

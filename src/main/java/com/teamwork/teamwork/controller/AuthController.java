@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AuthController {
 
-    private final UserService userService;
+    private  UserService userService;
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -19,15 +19,13 @@ public class AuthController {
 
     // default route
     @GetMapping("/")
-    public String defaultRoute(Model model) {
-        model.addAttribute("user", new User());
-        return "login";
+    public String goHome() {
+        return "redirect:/login";
     }
 
     // show login page
     @GetMapping("/login")
-    public String loginPage(Model model) {
-        model.addAttribute("user", new User());
+    public String loginPage() {
         return "login";
     }
 
@@ -40,7 +38,6 @@ public class AuthController {
         if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/login";
         }
-
         model.addAttribute("user", new User());
         return "register";
     }
@@ -61,7 +58,7 @@ public class AuthController {
 
         try {
             userService.saveUser(user); // may throw EmailAlreadyExistsException
-            return "redirect:/feed?success";
+            return "redirect:/feed";
 
         } catch (EmailAlreadyExistsException ex) {
             // Catch duplicate email and display error in form
@@ -72,7 +69,7 @@ public class AuthController {
     }
 
     // handle login
-    @PostMapping("/do-login")
+    @PostMapping("/login-user")
     public String loginUser(@RequestParam String email,
                             @RequestParam String password,
                             Model model,
@@ -93,6 +90,6 @@ public class AuthController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate(); // clear session
-        return "redirect:/login?logout";
+        return "redirect:/login";
     }
 }
