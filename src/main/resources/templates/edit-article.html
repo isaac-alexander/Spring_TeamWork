@@ -40,8 +40,9 @@
 
             <h3 class="mb-4">Edit Article</h3>
 
-            <form th:action="@{/articles/update}"
-                  method="post">
+            <form th:action="@{/articles/update}" method="post">
+
+                <input type="hidden" name="_method" value="PUT"/>
 
                 <input type="hidden"
                        th:value="${article.id}"

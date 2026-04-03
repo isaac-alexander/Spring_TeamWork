@@ -7,27 +7,26 @@
 </head>
 <body>
 
+<!-- navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand"
-           th:href="@{/feed}">TEAMWORK</a>
+        <a class="navbar-brand" th:href="@{/feed}">TEAMWORK</a>
 
+        <!-- navigation links -->
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-light"
-               th:href="@{/articles}">Articles</a>
-            <a class="btn btn-outline-light"
-               th:href="@{/gifs}">GIFs</a>
+            <a class="btn btn-outline-light" th:href="@{/articles}">Articles</a>
+            <a class="btn btn-outline-light" th:href="@{/gifs}">GIFs</a>
         </div>
 
+        <!-- create employee for admin and logout buttons -->
         <div class="ms-auto d-flex gap-2">
             <a class="btn btn-outline-light"
                th:if="${user.role == 'admin'}"
                th:href="@{/register}">
                 Create Employee
             </a>
-            <a class="btn btn-outline-danger"
-               th:href="@{/logout}">Logout</a>
+            <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
         </div>
 
     </div>
@@ -35,63 +34,99 @@
 
 <div class="container py-4">
 
-    <!-- Welcome -->
+    <!-- welcome message -->
     <div class="mb-4">
         <h4>Welcome, <span th:text="${user.name}"></span></h4>
 
         <div class="d-flex gap-2 mt-3">
-            <a class="btn btn-outline-dark"
-               th:href="@{/articles}">View Articles</a>
-            <a class="btn btn-outline-dark"
-               th:href="@{/gifs}">View GIFs</a>
+            <a class="btn btn-outline-dark" th:href="@{/articles}">Create Article</a>
+            <a class="btn btn-outline-dark" th:href="@{/gifs}">Create GIF</a>
         </div>
     </div>
 
     <hr class="mb-4">
 
-    <!-- articles -->
+    <!-- show articles -->
     <h4 class="mb-3">Articles</h4>
 
     <div class="row">
-        <div class="col-md-4 mb-4"
-             th:each="article : ${articles}">
-
+        <!-- loop through articles -->
+        <div class="col-md-6 mb-3" th:each="article : ${articles}">
             <div class="card shadow-sm h-100">
+
                 <div class="card-body">
+                    <!-- article title -->
+                    <h5 class="fw-bold" th:text="${article.title}"></h5>
 
-                    <h6 class="fw-bold"
-                        th:text="${article.title}"></h6>
+                    <!-- article content -->
+                    <p class="text-muted" th:text="${article.content}"></p>
 
-                    <p class="text-muted small"
-                       th:text="${article.content.length() > 120 ? article.content.substring(0,120) + '...' : article.content}">
-                    </p>
-
+                    <!-- author and date -->
                     <small class="text-secondary d-block mb-2">
-                        By <span th:text="${article.author}"></span>
+                        By <span th:text="${article.author}"></span> |
+                        <span th:text="${#temporals.format(article.createdAt, 'dd MMM yyyy HH:mm')}"></span>
                     </small>
 
-                    <a th:href="@{'/articles/' + ${article.id}}"
-                       class="btn btn-outline-secondary btn-sm">
-                        View
-                    </a>
+                    <!--  buttons -->
+                    <div class="d-flex gap-2 mb-2">
+                        <!-- view article -->
+                        <a th:href="@{'/articles/' + ${article.id}}"
+                           class="btn btn-outline-secondary btn-sm">
+                            View
+                        </a>
+
+                        <!-- edit article (only author) -->
+                        <a th:href="@{'/articles/edit/' + ${article.id}}"
+                           class="btn btn-outline-dark btn-sm"
+                           th:if="${article.author == user.name}">
+                            Edit
+                        </a>
+
+                        <!-- delete article (author or admin) -->
+                        <form th:action="@{'/articles/delete/' + ${article.id}}"
+                              method="post"
+                              th:if="${article.author == user.name or user.role == 'admin'}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+
+                    <!-- comments -->
+                    <div class="mt-2">
+                        <h6>Comments</h6>
+                        <!-- show comments -->
+                        <div th:each="c : ${article.comments}"
+                             class="mb-1 ps-2 border-start">
+                            <small th:text="${c}"></small>
+                        </div>
+
+                        <!-- add comment form -->
+                        <form th:action="@{'/articles/comment/' + ${article.id}}"
+                              method="post"
+                              class="mt-2 d-flex gap-2">
+                            <input type="text" name="comment"
+                                   class="form-control form-control-sm"
+                                   placeholder="Add a comment">
+                            <button class="btn btn-outline-dark btn-sm">Comment</button>
+                        </form>
+                    </div>
 
                 </div>
             </div>
-
         </div>
     </div>
 
     <hr class="my-4">
 
-    <!-- gif -->
+    <!-- GIFS SECTION -->
     <h4 class="mb-3">GIFs</h4>
 
     <div class="row">
-        <div class="col-md-4 col-sm-6 mb-4"
-             th:each="gif : ${gifs}">
-
+        <!-- Loop through gifs -->
+        <div class="col-md-4 col-sm-6 mb-4" th:each="gif : ${gifs}">
             <div class="card shadow-sm h-100">
 
+                <!-- GIF image -->
                 <a th:href="@{'/gifs/' + ${gif.id}}">
                     <img th:src="${gif.imageUrl}"
                          class="card-img-top"
@@ -100,21 +135,51 @@
 
                 <div class="card-body">
 
-                    <h6 class="fw-bold"
-                        th:text="${gif.title}"></h6>
+                    <!-- GIF title -->
+                    <h6 class="fw-bold" th:text="${gif.title}"></h6>
 
-                    <small class="text-secondary d-block mb-2">
-                        By <span th:text="${gif.author}"></span>
+                    <!-- Author and date -->
+                    <small class="text-muted d-block mb-2">
+                        By <span th:text="${gif.author}"></span><br>
+                        <span th:text="${#temporals.format(gif.createdAt, 'dd MMM yyyy HH:mm')}"></span>
                     </small>
 
-                    <a th:href="@{'/gifs/' + ${gif.id}}"
-                       class="btn btn-outline-secondary btn-sm">
-                        View
-                    </a>
+                    <!-- buttons -->
+                    <div class="d-flex gap-2 mb-2">
+                        <!-- View GIF -->
+                        <a th:href="@{'/gifs/' + ${gif.id}}"
+                           class="btn btn-outline-secondary btn-sm">View</a>
+
+                        <!-- Delete GIF (author or admin) -->
+                        <form th:action="@{'/gifs/delete/' + ${gif.id}}"
+                              method="post"
+                              th:if="${gif.author == user.name or user.role == 'admin'}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+
+                    <!-- GIF comments -->
+                    <ul class="list-group mb-2">
+                        <li class="list-group-item py-1"
+                            th:each="c : ${gif.comments}"
+                            th:text="${c}">
+                        </li>
+                    </ul>
+
+                    <!-- Add comment form -->
+                    <form th:action="@{'/gifs/comment/' + ${gif.id}}"
+                          method="post">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="comment"
+                                   class="form-control"
+                                   placeholder="Add comment">
+                            <button class="btn btn-outline-dark" type="submit">Post</button>
+                        </div>
+                    </form>
 
                 </div>
             </div>
-
         </div>
     </div>
 

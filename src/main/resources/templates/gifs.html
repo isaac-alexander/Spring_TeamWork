@@ -2,148 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>GIFs</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet">
 </head>
 <body>
 
+<!-- navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand"
-           th:href="@{/feed}">TEAMWORK</a>
+        <a class="navbar-brand" th:href="@{/feed}">TEAMWORK</a>
 
+        <!-- navigation links -->
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-light"
-               th:href="@{/feed}">Feed</a>
-            <a class="btn btn-outline-light"
-               th:href="@{/articles}">Articles</a>
+            <a class="btn btn-outline-light" th:href="@{/feed}">Feed</a>
+            <a class="btn btn-outline-light" th:href="@{/articles}">Articles</a>
         </div>
 
+        <!-- create employee for admin and logout buttons -->
         <div class="ms-auto d-flex gap-2">
-
             <a class="btn btn-outline-light"
                th:if="${user.role == 'admin'}"
                th:href="@{/register}">
                 Create Employee
             </a>
-
-            <a class="btn btn-outline-danger"
-               th:href="@{/logout}">Logout</a>
+            <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
         </div>
+
     </div>
 </nav>
 
 <div class="container py-4">
 
-    <!-- error messages -->
-    <div th:if="${param.error == 'FileRequired'}"
-         class="alert alert-danger text-center">
-        Please select a file before uploading
-    </div>
-
-    <div th:if="${param.error == 'TitleRequired'}"
-         class="alert alert-danger text-center">
-        Title cannot be empty
-    </div>
-
-    <!-- create gif -->
+    <!-- create gif form -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
 
             <h4 class="mb-3">Create GIF</h4>
 
-            <form th:action="@{/gifs}"
-                  method="post"
-                  enctype="multipart/form-data">
+            <form th:action="@{/gifs}" method="post" enctype="multipart/form-data">
 
+                <!-- gif title input -->
                 <input type="text"
                        name="title"
                        class="form-control mb-3"
                        placeholder="Title">
 
+                <!-- gif file input -->
                 <input type="file"
                        name="file"
                        class="form-control mb-3">
 
+                <!-- post button -->
                 <button class="btn btn-outline-dark">Post</button>
 
             </form>
-        </div>
-    </div>
-
-    <h5 class="mb-3">All GIFs</h5>
-
-    <!-- gif -->
-    <div class="row">
-        <div class="col-md-4 col-sm-6 mb-4"
-             th:each="gif : ${gifs}">
-
-            <div class="card shadow-sm h-100">
-
-                <a th:href="@{'/gifs/' + ${gif.id}}">
-                    <img th:src="${gif.imageUrl}"
-                         class="card-img-top"
-                         style="height: 200px; object-fit: cover;">
-                </a>
-
-                <div class="card-body">
-
-                    <!-- title -->
-                    <h6 class="fw-bold"
-                        th:text="${gif.title}"></h6>
-
-                    <!-- author and date -->
-                    <small class="text-muted d-block mb-2">
-                        By <span th:text="${gif.author}"></span><br>
-                        <span th:text="${#temporals.format(gif.createdAt, 'dd MMM yyyy HH:mm')}"></span>
-                    </small>
-
-                    <!-- buttons -->
-                    <div class="d-flex gap-2 mb-2">
-                        <a th:href="@{'/gifs/' + ${gif.id}}"
-                           class="btn btn-outline-secondary btn-sm">
-                            View
-                        </a>
-
-                        <form th:action="@{'/gifs/delete/' + ${gif.id}}"
-                              method="post"
-                              th:if="${gif.author == user.name or user.role == 'admin'}">
-                            <button class="btn btn-outline-danger btn-sm">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- comment -->
-                    <ul class="list-group mb-2">
-                        <li class="list-group-item py-1"
-                            th:each="c : ${gif.comments}"
-                            th:text="${c}">
-                        </li>
-                    </ul>
-
-                    <!-- add comment -->
-                    <form th:action="@{'/gifs/comment/' + ${gif.id}}"
-                          method="post">
-                        <div class="input-group input-group-sm">
-
-                            <input type="text"
-                                   name="comment"
-                                   class="form-control"
-                                   placeholder="Add comment">
-
-                            <button class="btn btn-outline-dark"
-                                    type="submit">
-                                Post
-                            </button>
-
-                        </div>
-                    </form>
-
-                </div>
-            </div>
         </div>
     </div>
 

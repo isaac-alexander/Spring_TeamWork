@@ -30,9 +30,6 @@ public class ArticleController {
         // Send logged-in user to html.
         model.addAttribute("user", user);
 
-        // calls service to get all articles and send to html
-        model.addAttribute("articles", articleService.getAllArticles());
-
         return "articles";
     }
 
@@ -46,10 +43,11 @@ public class ArticleController {
         article.setAuthor(user.getName()); // sets logged-in user as author.
         articleService.saveArticle(article); // save new article.
 
-        return "redirect:/articles"; // refresh page to show new article.
+        // redirect to feed to show all articles
+        return "redirect:/feed";
     }
 
-    // edit page
+    // edit article page
     @GetMapping("/articles/edit/{id}")
     public String editArticle(@PathVariable Long id,
                               Model model,
@@ -58,6 +56,7 @@ public class ArticleController {
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) return "redirect:/login";
 
+        // get article by id
         Article article = articleService.getArticleById(id);
         if (article == null) return "redirect:/articles";
 
@@ -65,56 +64,57 @@ public class ArticleController {
         // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
         // !"admin".equalsIgnoreCase(user.getRole())
         // checks if the current user’s role is not "admin".
-        if (!article.getAuthor().equals(user.getName())
-                && !"admin".equalsIgnoreCase(user.getRole())) {
+        if (!article.getAuthor().equals(user.getName()) &&
+                !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/articles";
         }
 
-        // calls service to get all articles and send to html
+        // Send article and user to html
         model.addAttribute("article", article);
-
-        // Send logged-in user to html.
         model.addAttribute("user", user);
 
         return "edit-article";
     }
 
     // update article
-    @PostMapping("/articles/update")
+    @PutMapping("/articles/update")
     public String updateArticle(@ModelAttribute Article article,
                                 HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
 
-        Article existingUser = articleService.getArticleById(article.getId());
-        if (existingUser == null) return "redirect:/articles";
+        // Fetch existing article from database
+        Article existingArticle = articleService.getArticleById(article.getId());
+        if (existingArticle == null) return "redirect:/articles";
 
         // Only author or admin
         // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
         // !"admin".equalsIgnoreCase(user.getRole())
         // checks if the current user’s role is not "admin".
-        if (!existingUser.getAuthor().equals(user.getName())
-                && !"admin".equalsIgnoreCase(user.getRole())) {
+        if (!existingArticle.getAuthor().equals(user.getName()) &&
+                !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/articles";
         }
 
-        // Keep original author
-        article.setAuthor(existingUser.getAuthor());
-        article.setCreatedAt(existingUser.getCreatedAt());
+        // Keep original author and createdAt
+        article.setAuthor(existingArticle.getAuthor());
+        article.setCreatedAt(existingArticle.getCreatedAt());
 
+        // save updated article
         articleService.saveArticle(article);
 
-        return "redirect:/articles";
+        // redirect to feed
+        return "redirect:/feed";
     }
 
     //    delete article
-    @PostMapping("/articles/delete/{id}")
-    public String deleteArticle(@PathVariable Long id,
-                                HttpSession session) {
+    @DeleteMapping("/articles/delete/{id}")
+    public String deleteArticle(@PathVariable Long id, HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) return "redirect:/login";
 
+        // get article from database
         Article article = articleService.getArticleById(id);
         if (article == null) return "redirect:/articles";
 
@@ -122,17 +122,19 @@ public class ArticleController {
         // !existingUser.getAuthor() checks if the person who originally created the article (author) is the same as the current logged-in user (user.getName()).
         // !"admin".equalsIgnoreCase(user.getRole())
         // checks if the current user’s role is not "admin".
-        if (!article.getAuthor().equals(user.getName())
-                && !"admin".equalsIgnoreCase(user.getRole())) {
+        if (!article.getAuthor().equals(user.getName()) &&
+                !"admin".equalsIgnoreCase(user.getRole())) {
             return "redirect:/articles";
         }
 
+        // delete article
         articleService.deleteArticle(id);
 
-        return "redirect:/articles";
+        // redirect to feed
+        return "redirect:/feed";
     }
 
-    // add comment
+    // add comment to article
     @PostMapping("/articles/comment/{id}")
     public String addComment(@PathVariable Long id,
                              @RequestParam String comment,
@@ -142,31 +144,30 @@ public class ArticleController {
 
         if (user == null) return "redirect:/login";
 
+        // add username to comment
         comment = user.getName() + ": " + comment;
-        // adds username to comment.
 
+        // save comment using service
         articleService.addComment(id, comment);
-        // calls service to save comment.
 
-        return "redirect:/articles"; // Refresh page
+        // redirect to feed
+        return "redirect:/feed";
     }
 
     // view single article
-    @GetMapping("/articles/{id}") // View single article
-    public String viewArticle(@PathVariable Long id,
-                              Model model,
-                              HttpSession session) {
+    @GetMapping("/articles/{id}")
+    public String viewArticle(@PathVariable Long id, Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("loggedInUser");
-
         if (user == null) return "redirect:/login";
 
+        // get article
         Article article = articleService.getArticleById(id);
+        if (article == null) return "redirect:/feed";
 
-        if (article == null) return "redirect:/articles";
-
-        model.addAttribute("article", article); // Pass article to html
-        model.addAttribute("user", user); // Pass user to html
+        // send article and user to html
+        model.addAttribute("article", article);
+        model.addAttribute("user", user);
 
         return "view-article";
     }

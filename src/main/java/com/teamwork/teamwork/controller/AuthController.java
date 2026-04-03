@@ -25,8 +25,13 @@ public class AuthController {
 
     // show login page
     @GetMapping("/login")
-    public String loginPage() {
-        return "login";
+    public String loginPage(HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "login";
+        } else {
+            return "redirect:/feed";
+        }
     }
 
     // handle login

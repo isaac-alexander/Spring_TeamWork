@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class GifController {
 
-    // calls the gif service. final means it does not change
+    // calls the gif service
     private final GifService gifService;
 
     public GifController(GifService gifService) {
@@ -22,23 +22,22 @@ public class GifController {
     // show gif page
     @GetMapping("/gifs")
     public String gifPage(HttpSession session, Model model) {
+
         // gets logged-in user from session
         User user = (User) session.getAttribute("loggedInUser");
         // if no user redirect to login page
         if (user == null) return "redirect:/login";
-        // sends user object to html
+
+        // Send user to html
         model.addAttribute("user", user);
-        // calls service to get all gifs and send to html
-        model.addAttribute("gifs", gifService.getAllGifs());
         return "gifs";
     }
 
     // create gif page
-    @PostMapping("/gifs") // triggered when form submits
-    public String createGif(
-            @RequestParam("title") String title, // get title from form
-            @RequestParam("file") MultipartFile file, // get uploaded file
-            HttpSession session) {
+    @PostMapping("/gifs")
+    public String createGif(@RequestParam("title") String title, // get title from form
+                            @RequestParam("file") MultipartFile file,  // get uploaded file
+                            HttpSession session) {
 
         // get logged-in user
         User user = (User) session.getAttribute("loggedInUser");
@@ -60,21 +59,21 @@ public class GifController {
         // set author as logged-in user's name
         gif.setAuthor(user.getName());
 
-        // call service → upload to cloudinary + save to DB
+        //  save gif uploads to cloudinary and database
         gifService.saveGif(gif, file);
 
-        // redirect back to gifs page
-        return "redirect:/gifs";
+        // redirect to feed to see all gifs
+        return "redirect:/feed";
     }
 
     //  delete gif
-    @PostMapping("/gifs/delete/{id}") // triggered when delete button clicked
+    @DeleteMapping("/gifs/delete/{id}")
     public String deleteGif(@PathVariable Long id, HttpSession session) {
 
         // get user from session
         User user = (User) session.getAttribute("loggedInUser");
 
-        // get GIF from database
+        // get gif from database
         Gif gif = gifService.getGifById(id);
 
         // if not found - go back
@@ -89,20 +88,18 @@ public class GifController {
             return "redirect:/gifs";
         }
 
-        // delete GIF (cloudinary + DB)
+        // delete gif (cloudinary and DB)
         gifService.deleteGif(id);
 
-        return "redirect:/gifs";
+        return "redirect:/feed";
     }
 
-    //  add comment
+    // add comment
     @PostMapping("/gifs/comment/{id}")
-    public String addComment(
-            @PathVariable Long id, // GIF ID
-            @RequestParam String comment, // comment text
-            HttpSession session) {
+    public String addComment(@PathVariable Long id,
+                             @RequestParam String comment,
+                             HttpSession session) {
 
-        // get logged-in user
         User user = (User) session.getAttribute("loggedInUser");
 
         // attach username to comment
@@ -111,15 +108,12 @@ public class GifController {
         // save comment using service
         gifService.addComment(id, comment);
 
-        return "redirect:/gifs";
+        return "redirect:/feed";
     }
 
     //  view single gif
     @GetMapping("/gifs/{id}") // URL like /gifs/1
-    public String viewGif(
-            @PathVariable Long id,
-            Model model,
-            HttpSession session) {
+    public String viewGif(@PathVariable Long id, Model model, HttpSession session) {
 
         // get user
         User user = (User) session.getAttribute("loggedInUser");
@@ -127,11 +121,9 @@ public class GifController {
         // if not logged in - login
         if (user == null) return "redirect:/login";
 
-        // get GIF from database
+        // get gif from database
         Gif gif = gifService.getGifById(id);
-
-        // if not found → go back
-        if (gif == null) return "redirect:/gifs";
+        if (gif == null) return "redirect:/feed";
 
         // send gif to HTML
         model.addAttribute("gif", gif);

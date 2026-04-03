@@ -10,111 +10,56 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
 
-        <a class="navbar-brand"
-           th:href="@{/feed}">TEAMWORK</a>
+        <a class="navbar-brand" th:href="@{/feed}">TEAMWORK</a>
 
+        <!-- navigation links -->
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-light"
-               th:href="@{/feed}">Feed</a>
-            <a class="btn btn-outline-light"
-               th:href="@{/gifs}">GIFs</a>
+            <a class="btn btn-outline-light" th:href="@{/feed}">Feed</a>
+            <a class="btn btn-outline-light" th:href="@{/gifs}">GIFs</a>
         </div>
 
+        <!-- create employee for admin and logout buttons -->
         <div class="ms-auto d-flex gap-2">
             <a class="btn btn-outline-light"
                th:if="${user.role == 'admin'}"
                th:href="@{/register}">
                 Create Employee
             </a>
-            <a class="btn btn-outline-danger"
-               th:href="@{/logout}">Logout</a>
+            <a class="btn btn-outline-danger" th:href="@{/logout}">Logout</a>
         </div>
 
     </div>
 </nav>
+
 <div class="container py-4">
 
+    <!-- create article form -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
+
             <h4 class="mb-3">Create Article</h4>
 
-            <form th:action="@{/articles}"
-                  method="post">
+            <form th:action="@{/articles}" method="post">
 
+                <!-- article title input -->
                 <input type="text"
                        name="title"
                        class="form-control mb-3"
                        placeholder="Title">
 
+                <!-- article content input -->
                 <textarea name="content"
                           class="form-control mb-3"
                           rows="4"
                           placeholder="Write your article"></textarea>
 
+                <!-- post button -->
                 <button class="btn btn-outline-dark">Post</button>
 
             </form>
         </div>
     </div>
 
-    <h5 class="mb-3">Your Articles</h5>
-
-    <div th:each="article : ${articles}"
-         class="card shadow-sm mb-3">
-        <div class="card-body">
-
-            <h5 class="fw-bold"
-                th:text="${article.title}"></h5>
-            <p class="text-muted"
-               th:text="${article.content}"></p>
-            <br><br>
-            <br><br>
-
-            <small class="d-block mb-3 text-secondary">
-                By <span th:text="${article.author}"></span> |
-                <span th:text="${#temporals.format(article.createdAt, 'dd MMM yyyy HH:mm')}"></span>
-            </small>
-
-            <div class="d-flex gap-2">
-                <a th:href="@{'/articles/' + ${article.id}}"
-                   class="btn btn-outline-secondary btn-sm">
-                    View
-                </a>
-
-                <a th:href="@{'/articles/edit/' + ${article.id}}"
-                   class="btn btn-outline-dark btn-sm"
-                   th:if="${article.author == user.name}">
-                    Edit
-                </a>
-
-                <form th:action="@{'/articles/delete/' + ${article.id}}"
-                      method="post"
-                      th:if="${article.author == user.name or user.role == 'admin'}">
-
-                    <button class="btn btn-outline-danger btn-sm">Delete</button>
-                </form>
-            </div>
-            <!-- commentd -->
-            <div class="mt-3">
-                <h6>Comments</h6>
-
-                <div th:each="c : ${article.comments}"
-                     class="mb-1 ps-2 border-start">
-                    <small th:text="${c}"></small>
-                </div>
-
-                <form th:action="@{'/articles/comment/' + ${article.id}}"
-                      method="post"
-                      class="mt-2 d-flex gap-2">
-                    <input type="text"
-                           name="comment"
-                           class="form-control form-control-sm"
-                           placeholder="Add a comment">
-                    <button class="btn btn-outline-dark btn-sm">Comment</button>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 </html>
